@@ -28,7 +28,7 @@ class Blog(db.Model):
 
 class BlogSchema(ma.Schema):
     class Meta:
-        fields = ('category', 'author', 'title', 'content')
+        fields = ('id','category', 'author', 'title', 'content')
 
 blog_schema = BlogSchema()
 blogs_schema = BlogSchema(many=True)
