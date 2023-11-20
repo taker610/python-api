@@ -1,14 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-import os
+#import os
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
+#basedir = os.path.abspath(os.path.dirname(__file__))
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://jafjilbllqlkym:2917c8ddd24c8cace3eea776165605b1c45f4a4592a4779e7c17f19acabb4534@ec2-44-206-204-65.compute-1.amazonaws.com:5432/db8k0g41shj1bl'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -83,8 +84,8 @@ def blog_update(id):
 # Endpoint for deleting a blog
 @app.route('/blog/<id>', methods=['DELETE'])
 def blog_delete(id):
-    blog = Blog.query.get(id)
-    db.session.delete(id)
+    blog = db.session.query(Blog).filter(Blog.id == id).first()
+    db.session.delete(blog)
     db.session.commit()
 
     return blog_schema.jsonify(blog)
