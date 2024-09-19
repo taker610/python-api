@@ -71,7 +71,7 @@ def get_cars():
 
 # Endpoint to query a single car
 @app.route('/car/<id>', methods=["GET"])
-def get_blog(id):
+def get_car(id):
     car = Car.query.get(id)
     return car_schema.jsonify(car)
 
