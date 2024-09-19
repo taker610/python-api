@@ -14,82 +14,97 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://lxctgcxqqgogle:d8348ea5a21
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-class Blog(db.Model):
+class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(100), unique=False)
-    author = db.Column(db.String(100), unique=False)
-    title = db.Column(db.String(100), unique=False)
-    content = db.Column(db.String(1000), unique=False)
+    make = db.Column(db.String(100), unique=False)
+    model = db.Column(db.String(100), unique=False)
+    year = db.Column(db.String(100), unique=False)
+    condition = db.Column(db.String(100), unique=False)
+    mileage = db.Column(db.String(100), unique=False)
+    photo = db.Column(db.String(1000), unique=False)
+    description = db.Column(db.String(1000), unique=False)
 
-    def __init__(self, category, author, title, content):
-       self.category = category
-       self.author = author
-       self.title = title
-       self.content = content 
+    def __init__(self, make, model, year, condition, mileage, photo, description):
+       self.make = make
+       self.model = model
+       self.year = year
+       self.condition = condition 
+       self.mileage = mileage 
+       self.photo = photo 
+       self.description = description 
        
 
-class BlogSchema(ma.Schema):
+class CarSchema(ma.Schema):
     class Meta:
-        fields = ('id','category', 'author', 'title', 'content')
+        fields = ('id','make', 'model', 'year', 'condition', 'mileage', 'photo', 'description')
 
-blog_schema = BlogSchema()
-blogs_schema = BlogSchema(many=True)
+car_schema = CarSchema()
+cars_schema = CarSchema(many=True)
 
-#Endpoint to create a new blog
-@app.route('/blog', methods=['POST'])
-def add_Blog():
-    category = request.json['category']
-    author = request.json['author']
-    title = request.json['title']
-    content = request.json['content']
+#Endpoint to create a new car
+@app.route('/car', methods=['POST'])
+def add_Car():
+    make = request.json['make']
+    model = request.json['model']
+    year = request.json['year']
+    condition = request.json['condition']
+    mileage = request.json['mileage']
+    photo = request.json['photo']
+    description = request.json['description']
 
-    new_blog = Blog(category, author, title, content)
+    new_car = Car(make, model, year, condition, mileage, photo, description)
 
-    db.session.add(new_blog)
+    db.session.add(new_car)
     db.session.commit()
 
-    blog = Blog.query.get(new_blog.id)
+    car = Car.query.get(new_car.id)
 
-    return blog_schema.jsonify(blog)
+    return car_schema.jsonify(car)
 
 # Endpoint to query all blogs
-@app.route('/blogs', methods=['GET'])
-def get_blogs():
-    all_blogs = Blog.query.all()
-    result = blogs_schema.dump(all_blogs)
+@app.route('/cars', methods=['GET'])
+def get_cars():
+    all_cars = Car.query.all()
+    result = cars_schema.dump(all_cars)
     return jsonify(result)
 
-# Endpoint to query a single blog
-@app.route('/blog/<id>', methods=["GET"])
+# Endpoint to query a single car
+@app.route('/car/<id>', methods=["GET"])
 def get_blog(id):
-    blog = Blog.query.get(id)
-    return blog_schema.jsonify(blog)
+    car = Car.query.get(id)
+    return car_schema.jsonify(car)
 
-# Endpoint for updating a blog
-@app.route("/blog/<id>", methods=["PUT"])
-def blog_update(id):
-    blog = Blog.query.get(id)
-    category = request.json['category']
-    author = request.json['author']
-    title = request.json['title']
-    content = request.json["content"]
+# Endpoint for updating a car
+@app.route("/car/<id>", methods=["PUT"])
+def car_update(id):
+    car = Car.query.get(id)
+    make = request.json['make']
+    model = request.json['model']
+    year = request.json['year']
+    condition = request.json["condition"]
+    mileage = request.json["mileage"]
+    photo = request.json["photo"]
+    description = request.json["description"]
 
-    blog.category = category
-    blog.author = author
-    blog.title = title
-    blog.content = content
+    car.make = make
+    car.model = model
+    car.year = year
+    car.condition = condition
+    car.mileage = mileage
+    car.photo = photo
+    car.photo = description
 
     db.session.commit()
-    return blog_schema.jsonify(blog)
+    return car_schema.jsonify(car)
 
-# Endpoint for deleting a blog
-@app.route('/blog/<id>', methods=['DELETE'])
-def blog_delete(id):
-    blog = db.session.query(Blog).filter(Blog.id == id).first()
-    db.session.delete(blog)
+# Endpoint for deleting a car
+@app.route('/car/<id>', methods=['DELETE'])
+def car_delete(id):
+    car = db.session.query(Car).filter(Car.id == id).first()
+    db.session.delete(car)
     db.session.commit()
 
-    return blog_schema.jsonify(blog)
+    return car_schema.jsonify(car)
 
 if __name__ == "__main__":
     app.run(debug=True)
